@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | LabourMitra</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='auth.css') }}">
+    <!-- Using Bootstrap for some extra layout utilities if needed, but keeping auth.css as primary -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .auth-container {
+            max-width: 500px; /* Increased slightly for labour fields */
+            transition: all 0.3s ease-in-out;
+        }
+        .labour-extra {
+            display: none;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+        }
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 5px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-container shadow-lg">
+        <div class="brand">
+            <span class="labour">Labour</span><span class="mitra">Mitra</span>
+        </div>
+
+        {% if error %}
+        <div class="error-msg">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data" id="registrationForm">
+            <label class="form-label">Full Name</label>
+            <input type="text" name="name" placeholder="Enter your full name" required>
+
+            <label class="form-label">Mobile Number</label>
+            <input type="text" name="mobile" placeholder="10-digit mobile number" required pattern="[0-9]{10}">
+
+            <label class="form-label">Password</label>
+            <input type="password" name="password" placeholder="Create a password" required>
+
+            <label class="form-label">I am a...</label>
+            <select name="role" id="roleSelect" onchange="toggleFields()" required>
+                <option value="" disabled selected>Select Role</option>
+                <option value="customer">Customer (Hire Labours)</option>
+                <option value="labour">Labour (Providing Services)</option>
+            </select>
+
+            <!-- Labour Specific Fields -->
+            <div id="labourFields" class="labour-extra">
+                <hr class="my-4">
+                <h6 class="mb-3 fw-bold text-primary">Professional Details</h6>
+                
+                <label class="form-label">Category</label>
+                <select name="category" id="category">
+                    <option value="" disabled selected>Select Service Category</option>
+                    {% for cat in CATEGORIES %}
+                    <option value="{{ cat }}">{{ cat }}</option>
+                    {% endfor %}
+                </select>
+
+                <div class="row">
+                    <div class="col-6">
+                        <label class="form-label">City</label>
+                        <select name="city" class="form-select shadow-none" style="height: 52px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                            <option value="Indore" selected>Indore</option>
+                            <option value="Bhopal">Bhopal</option>
+                            <option value="Ujjain">Ujjain</option>
+                        </select>
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">Area</label>
+                        <select name="area" class="form-select shadow-none" style="height: 52px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                            <option value="" disabled selected>Select Area</option>
+                            <option value="Vijay Nagar">Vijay Nagar</option>
+                            <option value="Rajwada">Rajwada</option>
+                            <option value="Bhanwarkuan">Bhanwarkuan</option>
+                            <option value="Palasia">Palasia</option>
+                            <option value="Annapurna">Annapurna</option>
+                            <option value="Khajrana">Khajrana</option>
+                            <option value="Sapna Sangeeta">Sapna Sangeeta</option>
+                            <option value="Saket">Saket</option>
+                            <option value="LIG Colony">LIG Colony</option>
+                        </select>
+                    </div>
+                </div>
+
+                <label class="form-label">Aadhaar Number</label>
+                <input type="text" name="aadhaar_number" placeholder="12-digit Aadhaar" pattern="[0-9]{12}">
+
+                <label class="form-label">ID Proof Type</label>
+                <select name="id_proof_type">
+                    <option value="Aadhaar">Aadhaar Card</option>
+                    <option value="PAN">PAN Card</option>
+                    <option value="Driving License">Driving License</option>
+                </select>
+
+                <h6 class="mt-4 mb-3 fw-bold text-primary">Document Uploads</h6>
+                
+                <label class="form-label">Profile Photo</label>
+                <input type="file" name="profile_photo" accept="image/*">
+
+                <label class="form-label">ID Proof Image</label>
+                <input type="file" name="id_proof_image" accept="image/*">
+
+                <div class="row">
+                    <div class="col-6">
+                        <label class="form-label">Aadhaar Front</label>
+                        <input type="file" name="aadhaar_front" accept="image/*">
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label">Aadhaar Back</label>
+                        <input type="file" name="aadhaar_back" accept="image/*">
+                    </div>
+                </div>
+
+                <label class="form-label">Address Proof</label>
+                <input type="file" name="address_proof" accept="image/*,application/pdf">
+            </div>
+
+            <button type="submit">Create Account</button>
+        </form>
+
+        <div class="switch">
+            Already have an account? <a href="/login">Login here</a>
+        </div>
+    </div>
+
+    <script>
+        function toggleFields() {
+            const role = document.getElementById('roleSelect').value;
+            const labourFields = document.getElementById('labourFields');
+            const categorySelect = document.getElementById('category');
+            
+            if (role === 'labour') {
+                labourFields.style.display = 'block';
+                categorySelect.setAttribute('required', 'required');
+            } else {
+                labourFields.style.display = 'none';
+                categorySelect.removeAttribute('required');
+            }
+        }
+    </script>
+</body>
+</html>
